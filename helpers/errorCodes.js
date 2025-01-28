@@ -412,6 +412,7 @@ module.exports = {
 		code: 'E1306',
 		message: 'Rating must be between 1 and 5'
 	},
+
 	E1307: {
 		code: 'E1307',
 		message: 'Could not find any feedback for this course'
