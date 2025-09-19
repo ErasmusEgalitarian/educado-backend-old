@@ -234,10 +234,24 @@ router.get('/:id/subscriptions', async (req, res) => {
 			return res.status(400).json({ 'error': errorCodes['E0004'] });
 		}
 
-		const subscribedCourses = user.subscriptions;
+		const subscribedIds = (user.subscriptions || []).map(id => String(id));
+
+		const completedByCourse = new Map();
+    		for (const course of user.courses ?? []) {
+  				const courseId = course?.courseId;
+  				if (!courseId) continue;
+  				const completed = (course.sections ?? []).filter(student => student?.isComplete === true).length;
+  				completedByCourse.set(String(courseId), completed);
+			}
 
 		// Find courses based on the subscribed course IDs
-		const courseList = await CourseModel.find({ '_id': { $in: subscribedCourses } });
+		const courseList = await CourseModel.find({ _id: { $in: subscribedIds } });
+
+		    courseList.sort(
+      			(a, b) =>
+        		(completedByCourse.get(String(b._id)) ?? 0) -
+        		(completedByCourse.get(String(a._id)) ?? 0)
+    		);
 
 		res.send(courseList);
 
