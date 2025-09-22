@@ -100,12 +100,28 @@ describe('Course Routes', () => {
 		await mongoose.connection.close();
 	});
 
+	//Utility methods
+
+	//const course = await db.collection('courses').findOne({ title: 'test course' });
+	//const courseId = course._id;
+	async function findCourseByTitle() {
+		const course = await db.collection('courses').findOne({ title: 'test course' });
+		return course._id;
+	}
+
+	//const ObjectId = mongoose.Types.ObjectId;
+	//const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+	async function getNonexistentCourseId(){
+		const ObjectId = mongoose.Types.ObjectId;
+		return new ObjectId('5f841c2b1c8cfb2c58b78d68');
+	}
+
+
+
 	describe('GET /courses/:courseId', () => {
 
 		it('Should get a specific course', async () => {
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
-
+			const courseId = await findCourseByTitle();
 			const response = await request(`http://localhost:${PORT}`)
 				.get('/api/courses/' + courseId);
 
@@ -116,14 +132,10 @@ describe('Course Routes', () => {
 
 		it('Should handle course not found error', async () => {
 
-			// create non existing courseId
-			const ObjectId = mongoose.Types.ObjectId;
-			const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
-
-			// simulate a request for a non-existent course
+			const courseId = await getNonexistentCourseId();
 			const response = await request(`http://localhost:${PORT}`)
 				.get('/api/courses/' + courseId);
-
+			
 			expect(response.status).toBe(404);
 			expect(response.body.error.code).toBe('E0006');
 		});
@@ -143,8 +155,9 @@ describe('Course Routes', () => {
 	describe('GET /courses/:courseId/sections', () => {
 		it('Should get all sections from a course', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			const section = await db.collection('sections').findOne({ title: 'test section' });
 			const sectionId = section._id;
@@ -170,9 +183,11 @@ describe('Course Routes', () => {
 		it('Should handle course not found error', async () => {
 
 			// create non existing courseId
-			const ObjectId = mongoose.Types.ObjectId;
-			const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
-
+			//const ObjectId = mongoose.Types.ObjectId;
+			//const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+            const courseId = await getNonexistentCourseId();
+		
+			
 			// simulate a request for a non-existent course
 			const response = await request(`http://localhost:${PORT}`)
 				.get('/api/courses/' + courseId + '/sections');
@@ -198,8 +213,9 @@ describe('Course Routes', () => {
 
 		it('Should get a specific section', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			const section = await db.collection('sections').findOne({ title: 'test section' });
 			const sectionId = section._id;
@@ -238,8 +254,9 @@ describe('Course Routes', () => {
 			const sectionId = section._id;
 
 			// create non existing courseId
-			const ObjectId = mongoose.Types.ObjectId;
-			const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			//const ObjectId = mongoose.Types.ObjectId;
+			//const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			const courseId = await getNonexistentCourseId();
 
 			// simulate a request for a non-existent course
 			const response = await request(`http://localhost:${PORT}`)
@@ -264,13 +281,16 @@ describe('Course Routes', () => {
 
 		it('Should handle section not found error', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// create non existing courseId
-			const ObjectId = mongoose.Types.ObjectId;
-			const sectionId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
-
+	
+			//const ObjectId = mongoose.Types.ObjectId;
+			//const sectionId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			const sectionId = await getNonexistentCourseId();
+			
 			// simulate a request for a non-existent course
 			const response = await request(`http://localhost:${PORT}`)
 				.get('/api/courses/' + courseId + '/sections/' + sectionId);
@@ -281,8 +301,9 @@ describe('Course Routes', () => {
 
 		it('Should handle invalid section id', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// simulate a request for a non-existent course
 			const response = await request(`http://localhost:${PORT}`)
@@ -297,8 +318,9 @@ describe('Course Routes', () => {
 
 		it('Should handle course does not contain sections', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			const resultCourse = await db.collection('courses').findOneAndUpdate(
 				{ _id: courseId },
@@ -321,8 +343,9 @@ describe('Course Routes', () => {
 
 		it('Should handle sections not found', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			const section = await db.collection('sections').findOne({ title: 'test section' });
 			const sectionId = section._id;
@@ -345,6 +368,7 @@ describe('Course Routes', () => {
 			const response = await request(`http://localhost:${PORT}`)
 				.get('/api/courses/' + courseId + '/sections');
 
+
 			expect(response.status).toBe(404);
 			expect(response.body.error.code).toBe('E0007');
 		});
@@ -353,8 +377,9 @@ describe('Course Routes', () => {
 	describe('POST /courses/:courseId/subscribe', () => {
 		it('Should subscribe a user to a course', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			const user = await db.collection('students').findOne({ baseUser: actualUser._id });
 
@@ -370,8 +395,9 @@ describe('Course Routes', () => {
 		});
 
 		it('add incomplete course when subbing', async () => {
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			const obj = await addIncompleteCourse(course);
 
@@ -381,8 +407,9 @@ describe('Course Routes', () => {
 
 		it('Should handle user not found error when subscribing', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// create non existing user id
 			const ObjectId = mongoose.Types.ObjectId;
@@ -400,8 +427,9 @@ describe('Course Routes', () => {
 
 		it('Should handle invalid user id when subscribing', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// Simulate a request to unsubscribe with an invalid user id
 			const response = await request(`http://localhost:${PORT}`)
@@ -418,8 +446,9 @@ describe('Course Routes', () => {
 			const userId = user.baseUser;
 
 			// create non existing courseId
-			const ObjectId = mongoose.Types.ObjectId;
-			const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			//const ObjectId = mongoose.Types.ObjectId;
+			//const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			
 
 			// Simulate a request to unsubscribe with an invalid user id
 			const response = await request(`http://localhost:${PORT}`)
@@ -446,8 +475,9 @@ describe('Course Routes', () => {
 
 		it('Increments number of subscribers for a course, when subscribing', async () => {
 			// find a course
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// find the first user
 			const user = await db.collection('students').findOne({ baseUser: actualUser._id });
@@ -516,8 +546,9 @@ describe('Course Routes', () => {
 		it('Should handle user not found error when unsubscribing', async () => {
 
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// create non existing user id
 			const ObjectId = mongoose.Types.ObjectId;
@@ -535,8 +566,9 @@ describe('Course Routes', () => {
 
 		it('Should handle invalid user id when unsubscribing', async () => {
 
-			const course = await db.collection('courses').findOne({ title: 'test course' });
-			const courseId = course._id;
+			//const course = await db.collection('courses').findOne({ title: 'test course' });
+			//const courseId = course._id;
+			const courseId = await findCourseByTitle();
 
 			// Simulate a request to unsubscribe with an invalid user id
 			const response = await request(`http://localhost:${PORT}`)
@@ -553,8 +585,9 @@ describe('Course Routes', () => {
 			const userId = user.baseUser;
 
 			// create non existing courseId
-			const ObjectId = mongoose.Types.ObjectId;
-			const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			//const ObjectId = mongoose.Types.ObjectId;
+			//const courseId = new ObjectId('5f841c2b1c8cfb2c58b78d68');
+			const courseId = await getNonexistentCourseId();
 
 			// Simulate a request to unsubscribe with an invalid user id
 			const response = await request(`http://localhost:${PORT}`)
