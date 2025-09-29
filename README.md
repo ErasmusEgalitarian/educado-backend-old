@@ -1,3 +1,7 @@
+# Archive notice
+
+This project has been archived and moved into a new mono repo [educado-backend](https://github.com/ErasmusEgalitarian/educado-backend).
+
 # Educado backend
 
 Backend for both the Educado webpage (content creator page) and the Educado mobile application (student page).
