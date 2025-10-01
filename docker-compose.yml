@@ -1,4 +1,3 @@
-version: '3'
 services:
   nodejs-app:
     container_name: educado_backend
@@ -8,9 +7,12 @@ services:
     ports:
       - "8888:8888"
     environment:
+      - NODE_ENV=production
       - MONGO_URI=mongodb://root:examplepassword@mongodb:27017/?authMechanism=DEFAULT&authSource=admin
     networks:
       - educado_network
+    depends_on:
+      - mongodb
 
   mongodb:
     build:
@@ -26,9 +28,6 @@ services:
       - mongodb_data:/data/db
     networks:
       - educado_network
-    depends_on:
-      - nodejs-app
-
 
 networks:
   educado_network:
